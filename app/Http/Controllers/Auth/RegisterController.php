@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\Http\Controllers\Controller;
+use App\User;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -43,30 +43,62 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
+
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \App\User
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+
+        try {
+            \DB::beginTransaction();
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+            $AccountServer = \App\AccountServer::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => strtoupper(md5($data['password'])),
+                'originalPassword' => $data['password'],
+                'ban' => 0
+            ]);
+            $AccountGamer = \App\AccountGamer::create([
+                'act_id' => $AccountServer->id,
+                'act_name' => '' . $AccountServer->name . '',
+                'gm' => 0,
+                'credits' => 200,
+                'mall_points' => 200,
+
+            ]);
+
+            if (($user and $AccountServer and $AccountGamer)) {
+                $user->act_id = $AccountServer->id;
+                $user->save();
+            }
+
+            \DB::commit();
+        } catch (\Exception $exception) {
+            \DB::rollBack();
+        }
+
+        return $user;
     }
 }
