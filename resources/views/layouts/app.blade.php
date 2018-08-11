@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>PKO</title>
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     @yield('css')
 </head>
 <body>
@@ -46,34 +47,57 @@
 </nav>
 
 <!-- Page Content -->
-<div class="container">
+<div class="container-fluid">
     <main class="py-4">
 
         <div class="row">
             <div class="col-md-3">
+
+
                 @auth
-                    <div style="margin-bottom: 20px !important;" class="card">
-                        <div class="card-header">
-                            Account
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled">
+                    @if(isset($user))
+                        <div style="margin-bottom: 20px !important;" class="card">
+                            <div class="card-header">
+                                Account
+                            </div>
+                            <div class="card-body">
+                                <ul style="margin-bottom: 10px !important;" class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{$user[0]->account->act_name}}
+                                    </li>
+                                </ul>
 
-                                <li><a style="margin-bottom: 10px; width: 100%;" class="btn btn-outline-info"
-                                       href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
+                                <hr>
+                                <ul style="margin-bottom: 10px !important;" class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Mall Points
+                                        <span class="badge badge-primary badge-pill">{{$user[0]->account->mall_points}}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Credit Points
+                                        <span class="badge badge-primary badge-pill">{{$user[0]->account->credits}}</span>
+                                    </li>
+                                </ul>
+                                <hr>
+                                <ul class="list-unstyled">
+
+                                    <li><a style="margin-bottom: 10px; width: 100%;" class="btn btn-outline-info"
+                                           href="{{ route('logout') }}"
+                                           onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a></li>
+                                            {{ __('Logout') }}
+                                        </a></li>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                          style="display: none;">
+                                        @csrf
+                                    </form>
 
 
-                            </ul>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endauth
 
                 <div style="margin-bottom: 20px !important;" class="card">
@@ -97,6 +121,10 @@
                             @auth
                                 <li><a style="margin-bottom: 10px; width: 100%;" class="btn btn-outline-info"
                                        href=" {{ url('/mall') }} "> Mall</a></li>
+
+                                    <li><a style="margin-bottom: 10px; width: 100%;" class="btn btn-outline-info"
+                                           href=" {{ route('storage.index')}} "> Storage box </a></li>
+
                             @endauth
                         </ul>
                     </div>
@@ -158,8 +186,8 @@
     </main>
 </div>
 <!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 @yield('js')
 </body>
 </html>

@@ -7,6 +7,7 @@ use App\User;
 use App\Guild;
 use App\Character;
 use App\Downloads;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -28,16 +29,35 @@ class HomeController extends Controller
     public function index()
     {
 
-        return view('home');
+        if (Auth::check()) {
+            $user = User::where('id','=',Auth::user()->id)->get();
+        }
+
+
+        return view('home', get_defined_vars());
     }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function downloads()
     {
+        if (Auth::check()) {
+            $user = User::where('id','=',Auth::user()->id)->get();
+        }
         // 10 downloads per page to be shown
         $downloads = array();//Downloads::paginate(10);
         return view('downloads',get_defined_vars());
     }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function ranking()
     {
+        if (Auth::check()) {
+            $user = User::where('id','=',Auth::user()->id)->get();
+        }
         // 3 types of rankings
         // 1. By experience / level
         // 2. By gold
@@ -65,8 +85,6 @@ class HomeController extends Controller
         {
             $join->on('character.act_id','=','account.act_id')->where('gm',0)->whereIn('account.act_id',$unbannedAccounts); // make sure they're not gms and they're not banned.
         })->get()->sortByDesc('member_total')->take(30);  // sort as needed and take top 30 results
-
-
         return view('ranking',get_defined_vars());
 
     }
