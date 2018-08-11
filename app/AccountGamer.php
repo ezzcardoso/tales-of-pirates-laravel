@@ -50,4 +50,9 @@ class AccountGamer extends Model
         'vote_time2' => 'string',
         'total_votes' => 'integer'
     ];
+
+    public function characters()
+    {
+        return $this->hasMany(\App\Character::class,'act_id');
+    }
 }

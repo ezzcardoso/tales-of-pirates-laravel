@@ -11,7 +11,7 @@ class User extends Authenticatable
     /**
      * @var array
      */
-    protected $with=['account'];
+    protected $with=['account.characters'];
     /**
      * The attributes that are mass assignable.
      *
