@@ -110,9 +110,11 @@ class StorageController extends Controller
 
                     if ($update_storage) {
 
-                        return response()->json(['success' => 'check your character game']);
+                        return response()->json(['success' => 'check your character game #ACT548']);
 
                     }
+
+                    return response()->json(['success' => 'check your character game #ACT6895']);
 
 
                 } else {

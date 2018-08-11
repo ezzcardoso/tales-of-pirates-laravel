@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    const ADMINISTRATOR = 99;
+
     use Notifiable;
     /**
      * @var array
@@ -36,5 +38,10 @@ class User extends Authenticatable
     public  function Account(){
 
       return $this->hasOne('App\AccountGamer','act_id','act_id');
+    }
+
+    public function isAdmin()
+    {
+        return ($this->account->gm) > 0 ? true : false;
     }
 }

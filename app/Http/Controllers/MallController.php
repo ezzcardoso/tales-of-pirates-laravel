@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mall;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +17,10 @@ class MallController extends Controller
     public function index()
     {
         if (\Auth::check()) {
-            $user = \App\User::where('id','=',\Auth::user()->id)->get();
+            $user = \App\User::where('id', '=', \Auth::user()->id)->get();
         }
 
-        $malls= \App\Mall::paginate(50);
+        $malls = \App\Mall::paginate(50);
         return view('mall', get_defined_vars());
     }
 
@@ -36,7 +37,7 @@ class MallController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -47,7 +48,7 @@ class MallController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -58,7 +59,7 @@ class MallController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -69,8 +70,8 @@ class MallController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -81,19 +82,25 @@ class MallController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         //
     }
+
     public function buy(Request $request)
     {
 
 
         $item = \App\Mall::find($request->MallID);
         if ($item->Quota > 0) {
+
+            $price = (int)$item->ItemPrice;
+            $user = User::find(Auth::user()->id);
+            $user->account->mall_points = Mall::subtract_value($user->account->mall_points, $price);
+
 
             $storage = new \App\StorageBox();
             $storage->act_id = Auth::user()->act_id;
@@ -108,11 +115,12 @@ class MallController extends Controller
             $item->Quota = $item->Quota - 1;
 
             if ($storage->save() and $item->save()) {
+                $user->account->save();
                 return response()->json(['success' => 'Record is successfully added to Storage']);
             } else {
                 return response()->json(['errors' => 'Record is not successfully added']);
             }
-        }else{
+        } else {
 
             return response()->json(['errors' => 'Item is finished']);
         }

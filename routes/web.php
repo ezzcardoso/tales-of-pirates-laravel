@@ -41,7 +41,7 @@ Route::put("/storage/{storage}", "StorageController@update")->name("storage.upda
 Route::delete("/storage/{storage}", "StorageController@destroy")->name("storage.destroy");
 
 
-Route::group(["middleware" => ["auth"], "namespace" => "Administrator", "prefix" => "/administrator"], function () {
+Route::group(["middleware" => ["Gm"], "namespace" => "Administrator", "prefix" => "/administrator"], function () {
 
     Route::get("/", "AdministratorController@index")->name("admin.index");
     Route::get("/admin", "AdministratorController@index")->name("admin.index");

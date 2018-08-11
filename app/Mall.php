@@ -13,5 +13,10 @@ class Mall extends Model
 
     protected $fillable = ['ItemName', 'ItemPrice', 'ItemDesc', 'Quota', 'Icon', 'cType', 'ItemID', 'quantity', 'category'];
 
+    static public function subtract_value(int $mall_points, int $ItemPrice)
+    {
 
+
+        return ($mall_points - $ItemPrice);
+    }
 }
