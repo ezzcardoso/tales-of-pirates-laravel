@@ -10,7 +10,7 @@ class Character extends Model
     public $table = 'character';
     protected $connection = 'DATABASE_GAME';
     protected $primaryKey = 'cha_id';
-    protected $appends = array('chartype', 'guildname');
+   // protected $appends = array('chartype', 'guildname');
 
     public $fillable = [
         'cha_name',

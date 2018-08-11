@@ -4,7 +4,7 @@ function Assign(button) {
     var url = "";
     var method = "POST";
     var storage_id = $('.storage:checked').val();
-    var char_id = $('#character').val();
+    var cha_id = $('#character').val();
     var assign = false;
     if (storage_id == '' || storage_id == undefined || storage_id == false) {
 
@@ -13,7 +13,7 @@ function Assign(button) {
     } else {
 
 
-        if (char_id == '' || char_id == undefined || char_id == false) {
+        if (cha_id == '' || cha_id == undefined || cha_id == false) {
 
             bootbox.alert("Select a character to assign!");
 
@@ -35,7 +35,7 @@ function Assign(button) {
         $.ajax({
             url: url,
             type: method,
-            data: {storage_id: storage_id, char_id: char_id},
+            data: {storage_id: storage_id, cha_id: cha_id},
             beforeSend: function () {
                 bnt.prop('disabled', true);
                 bnt.html("Aguarde");
@@ -51,11 +51,19 @@ function Assign(button) {
                 if (data.success) {
                     bootbox.alert(data.success);
                 }
+                if (data.errors) {
+                    bootbox.alert(data.errors);
+                }
+
+
+
+
 
                 $.each(data.errors, function (key, value) {
                     $('.alert-danger').show();
                     $('.alert-danger').append('<p>' + value + '</p>');
                 });
+
             },
             error: function (data) {
 
